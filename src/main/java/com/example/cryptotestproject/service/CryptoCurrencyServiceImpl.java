@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class CryptoCurrencyServiceImpl implements CryptoCurrencyService {
     private final CryptoCurrencyRepository currencyRepository;
-    private final String fileName = "report.csv";
 
     public CryptoCurrencyServiceImpl(CryptoCurrencyRepository currencyRepository) {
         this.currencyRepository = currencyRepository;
