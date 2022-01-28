@@ -8,7 +8,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 @Documented
 @Constraint(validatedBy = NameValidator.class)
 @Target({ ElementType.TYPE, ElementType.PARAMETER, ElementType.FIELD })

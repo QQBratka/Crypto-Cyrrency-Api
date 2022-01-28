@@ -1,32 +1,29 @@
 package com.example.cryptotestproject.service.api;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import lombok.AllArgsConstructor;
-import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
-@AllArgsConstructor
+@Service
 public class HttpClientService {
-    private final ObjectMapper objectMapper;
+    private final CloseableHttpClient httpClient = HttpClients.createDefault();
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    {
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
     public <T> T get(String url, Class<T> clazz) {
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpGet request = new HttpGet(url);
-            try (CloseableHttpResponse response = httpClient.execute(request)) {
-                HttpEntity entity = response.getEntity();
-                String result = EntityUtils.toString(entity);
-                return objectMapper.readValue(result, clazz);
-            }
+        HttpGet request = new HttpGet(url);
+        try (CloseableHttpResponse response = httpClient.execute(request)) {
+            return objectMapper.readValue(response.getEntity().getContent(), clazz);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to perform request", e);
+            throw new RuntimeException("Can't fetch info from URL: " + url, e);
         }
     }
 }
-
